@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ClipboardList, Bus, Train, PlusCircle, CheckCircle2, IndianRupee, Sparkles } from 'lucide-react';
 import AIInsightsPanel from '@/components/AIInsightsPanel';
+import { supabase } from '@/lib/supabase';
 
 export default function OperatorDashboard() {
   const [transportMode, setTransportMode] = useState('bus');
@@ -14,20 +15,41 @@ export default function OperatorDashboard() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Mock API call simulation
-    setTimeout(() => {
+    
+    try {
+      // Connect to Supabase 'ticketing_logs' table
+      const { error } = await supabase
+        .from('ticketing_logs')
+        .insert([
+          {
+            transport_mode: transportMode,
+            log_type: logType,
+            trip_id: tripId,
+            tickets_sold: parseInt(ticketsSold),
+            revenue: parseFloat(revenue)
+          }
+        ]);
+
+      if (error) {
+        console.error("Supabase Error:", error);
+        alert(`Supabase Error: ${error.message}\nMake sure that the 'ticketing_logs' table actually exists in your Supabase database!`);
+      } else {
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          setTripId('');
+          setTicketsSold('');
+          setRevenue('');
+        }, 3000);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
       setIsSubmitting(false);
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-        setTripId('');
-        setTicketsSold('');
-        setRevenue('');
-      }, 3000);
-    }, 1000);
+    }
   };
 
   return (

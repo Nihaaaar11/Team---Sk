@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { Navigation } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
 
@@ -53,24 +54,59 @@ export default function TelemetryDashboard() {
     mapRef.current = null;
   }, []);
 
-  // Fetch HTML5 Geolocation
-  useEffect(() => {
-    if (typeof window !== "undefined" && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const loc = { lat: position.coords.latitude, lng: position.coords.longitude };
-          setCurrentLocation(loc);
-          if (mapRef.current) {
-            mapRef.current.panTo(loc);
-            mapRef.current.setZoom(15);
-          }
-        },
-        (error) => {
-          console.warn("Geolocation access denied or unavailable.", error);
-        },
-        { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
-      );
+  const updateSupabaseLocation = async (latitude: number, longitude: number) => {
+    try {
+      await supabase.from('live_locations').insert([
+        { latitude, longitude, updated_at: new Date().toISOString() }
+      ]);
+    } catch (err) {
+      console.error('Error updating location to Supabase:', err);
     }
+  };
+
+  // Real-time location tracking
+  useEffect(() => {
+    let watchId: number;
+
+    const trackLocation = () => {
+      if (typeof window !== "undefined" && "geolocation" in navigator) {
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            const loc = { lat: latitude, lng: longitude };
+            
+            // Update local map state
+            setCurrentLocation(loc);
+            
+            // Push real-time coordinates to Supabase
+            updateSupabaseLocation(latitude, longitude);
+          },
+          (error) => console.error("Error tracking location:", error),
+          // @ts-ignore - distanceFilter is standard in React Native
+          { enableHighAccuracy: true, distanceFilter: 10, maximumAge: 0, timeout: 10000 }
+        );
+      }
+    };
+
+    trackLocation();
+
+    // Apply immediate map center pan (since watchPosition might wait for movement)
+    if (typeof window !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const loc = { lat: position.coords.latitude, lng: position.coords.longitude };
+        setCurrentLocation(loc);
+        if (mapRef.current) {
+          mapRef.current.panTo(loc);
+          mapRef.current.setZoom(15);
+        }
+      });
+    }
+
+    return () => {
+      if (watchId !== undefined && typeof window !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
   }, []);
 
   if (!GOOGLE_MAPS_KEY || GOOGLE_MAPS_KEY.length < 10) {
