@@ -16,6 +16,9 @@ const mockVehicles = [
 const mapOptions: google.maps.MapOptions = {
   mapTypeId: 'roadmap',
   disableDefaultUI: false,
+  mapTypeControl: false,
+  fullscreenControl: false,
+  streetViewControl: false,
   zoomControl: true,
   styles: [
     { elementType: 'geometry', stylers: [{ color: '#f5f5f0' }] },
@@ -107,20 +110,7 @@ export default function TelemetryDashboard() {
         ))}
       </GoogleMap>
 
-      {/* Floating HUD status overlay */}
-      <div className="absolute top-4 left-4 bg-white/70 backdrop-blur-md border border-slate-200 p-4 rounded-xl shadow-lg z-10 hidden sm:block pointer-events-none">
-        <h3 className="text-xs uppercase font-bold text-slate-500 mb-2 tracking-widest">Active Fleet</h3>
-        <div className="flex flex-col gap-1 text-sm font-medium">
-          <div className="flex justify-between gap-6">
-            <span className="text-slate-600">Metro Lines</span>
-            <span className="text-slate-900">4 Active</span>
-          </div>
-          <div className="flex justify-between gap-6">
-            <span className="text-slate-600">City Buses</span>
-            <span className="text-slate-900">124 Deployed</span>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 }

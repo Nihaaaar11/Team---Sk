@@ -1,12 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Bus, Train, Zap, Bike, Navigation } from 'lucide-react';
+import { Bus, Train, Zap, Bike, Navigation, Search, X } from 'lucide-react';
 
 interface SidebarProps {
   className?: string;
   startPoint?: string;
   destPoint?: string;
+  onStartChange?: (v: string) => void;
+  onDestChange?: (v: string) => void;
+  showSearchToggle?: boolean;
 }
 
 const transportModes = [
@@ -19,7 +22,7 @@ const transportModes = [
 const suggestions = [
   { from: 'Hitech City',   to: 'Charminar',    time: '32 min', mode: 'metro', crowding: 'Low' },
   { from: 'Banjara Hills', to: 'Secunderabad', time: '18 min', mode: 'bus',   crowding: 'High' },
-  { from: 'Gachibowli',   to: 'Jubilee Hills', time: '12 min', mode: 'auto',  crowding: 'Med' },
+  { from: 'Gachibowli',   to: 'Jubilee Hills', time: '12 min', mode: 'auto',  crowding: 'Med' }
 ];
 
 const crowdColor: Record<string, string> = {
@@ -28,8 +31,9 @@ const crowdColor: Record<string, string> = {
   High: 'text-red-500',
 };
 
-export default function Sidebar({ className = '', startPoint = '', destPoint = '' }: SidebarProps) {
+export default function Sidebar({ className = '', startPoint = '', destPoint = '', onStartChange, onDestChange, showSearchToggle = false }: SidebarProps) {
   const [activeMode, setActiveMode] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const filteredSuggestions = suggestions.filter(s => {
     const matchesMode  = activeMode ? s.mode === activeMode : true;
@@ -44,6 +48,58 @@ export default function Sidebar({ className = '', startPoint = '', destPoint = '
 
   return (
     <aside className={`px-4 py-6 flex flex-col overflow-y-auto ${className}`}>
+      
+      {/* ── Optional Search Toggle for PC ── */}
+      {showSearchToggle && (
+        <div className="mb-6">
+          {!searchOpen && !startPoint && !destPoint ? (
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="w-full flex items-center gap-2 px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-500 text-sm hover:border-primary/60 hover:text-primary transition-all shadow-sm group"
+            >
+              <Search size={16} className="text-slate-400 group-hover:text-primary" />
+              <span className="font-bold">Start journey</span>
+            </button>
+          ) : (
+            <div className="flex flex-col gap-3 relative bg-white/70 backdrop-blur-md p-4 rounded-2xl border border-slate-200 shadow-sm animate-in fade-in duration-200">
+              <button
+                onClick={() => {
+                  setSearchOpen(false);
+                  if(onStartChange) onStartChange('');
+                  if(onDestChange) onDestChange('');
+                }}
+                className="absolute right-3 top-3 text-slate-400 hover:text-slate-700 z-10 bg-slate-100 p-1.5 rounded-full"
+              >
+                <X size={14} />
+              </button>
+              
+              <div className="mb-1 pr-8">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Route Search</h4>
+              </div>
+
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <input
+                  value={startPoint}
+                  onChange={e => onStartChange && onStartChange(e.target.value)}
+                  placeholder="Enter Starting point"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm transition-all"
+                />
+              </div>
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                <input
+                  value={destPoint}
+                  onChange={e => onDestChange && onDestChange(e.target.value)}
+                  placeholder="Enter destination"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm transition-all"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── Transport modes ── */}
       <div className="mb-6">
         <h3 className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-3 px-1">
@@ -68,7 +124,7 @@ export default function Sidebar({ className = '', startPoint = '', destPoint = '
       {/* ── Suggestions & Directions ── */}
       <div className="flex-1">
         <h3 className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-3 px-1">
-          Available Routes
+          Frequent routes
         </h3>
         <div className="flex flex-col gap-3">
           {filteredSuggestions.length === 0 ? (
