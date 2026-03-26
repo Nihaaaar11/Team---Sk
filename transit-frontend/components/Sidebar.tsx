@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Activity, Search, X, Bus, Train, Zap, Bike, Navigation } from 'lucide-react';
+import { Search, X, Bus, Train, Zap, Bike, Navigation } from 'lucide-react';
 
 interface SidebarProps {
   className?: string;
@@ -42,18 +42,6 @@ export default function Sidebar({ className = '' }: SidebarProps) {
 
   return (
     <aside className={`bg-sidebar px-4 py-6 flex flex-col overflow-y-auto ${className}`}>
-
-      {/* ── Logo ── */}
-      <div className="mb-6">
-        <div className="flex items-center gap-3 font-bold text-xl tracking-tight">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Activity size={20} className="text-white" />
-          </div>
-          <span>
-            <span className="text-slate-800">Travel</span><span className="text-primary font-bold">Ease</span>
-          </span>
-        </div>
-      </div>
 
       {/* ── Search toggle ── */}
       <div className="mb-5">

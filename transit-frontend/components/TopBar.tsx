@@ -23,11 +23,13 @@ export default function TopBar() {
 
   return (
     <header className="h-14 border-b border-border bg-background flex items-center justify-between px-6 shrink-0 z-20 relative shadow-sm">
-      <div className="flex items-center">
-        <h1 className="text-lg font-bold text-slate-800 hidden md:block group">
-          <span className="text-primary mr-2">/</span>
-          Citywide Demand Matrix
-        </h1>
+      <div className="flex items-center gap-3 font-bold text-xl tracking-tight">
+        <div className="w-8 h-8 flex items-center justify-center overflow-hidden">
+          <img src="/logo.png" alt="TravelEase Logo" className="w-full h-full object-contain" />
+        </div>
+        <span>
+          <span className="text-slate-800">Travel</span><span className="text-primary font-bold">Ease</span>
+        </span>
       </div>
 
       <div className="flex items-center gap-6">
