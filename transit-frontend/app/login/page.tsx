@@ -88,7 +88,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
     // Simulate authentication processing
     setTimeout(() => {
-      router.push('/');
+      router.push(`/?role=${accountType}`);
     }, 1500);
   };
 

@@ -1,10 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Mountain, Search, Menu, User, Bell } from 'lucide-react';
+import Image from 'next/image';
 
-export default function TopBar() {
+interface TopBarProps {
+  viewMode?: 'Passenger' | 'Operator';
+  onViewModeChange?: (mode: 'Passenger' | 'Operator') => void;
+}
+
+export default function TopBar({ viewMode = 'Passenger', onViewModeChange }: TopBarProps) {
   const [time, setTime] = useState<Date | null>(null);
-  const [viewMode, setViewMode] = useState<'Operator' | 'Passenger'>('Operator');
 
   useEffect(() => {
     setTime(new Date());
@@ -39,23 +45,13 @@ export default function TopBar() {
           {time ? formatTime(time) : '00:00:00'} IST
         </div>
 
-        {/* View Mode Toggle */}
-        <div className="flex bg-white/80 p-1 rounded-lg border border-slate-200 shadow-sm">
+        {/* Logout Button */}
+        <div className="flex shrink-0">
           <button 
-            onClick={() => setViewMode('Operator')}
-            className={`px-3 py-1 text-sm font-bold rounded-md transition-all ${
-              viewMode === 'Operator' ? 'bg-primary text-white shadow' : 'text-slate-500 hover:text-slate-800'
-            }`}
+            onClick={() => window.location.href = '/login'}
+            className="px-5 py-2 bg-red-50 text-red-600 hover:bg-red-500 hover:text-white rounded-xl text-sm font-bold transition-all border border-red-100 shadow-sm"
           >
-            Operator
-          </button>
-          <button 
-            onClick={() => setViewMode('Passenger')}
-            className={`px-3 py-1 text-sm font-bold rounded-md transition-all ${
-              viewMode === 'Passenger' ? 'bg-primary text-white shadow' : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            Passenger
+            Log Out
           </button>
         </div>
       </div>

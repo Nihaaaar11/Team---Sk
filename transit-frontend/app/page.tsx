@@ -1,17 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
 import TelemetryDashboard from '@/components/TelemetryDashboard';
 import AIInsightsPanel from '@/components/AIInsightsPanel';
+import OperatorDashboard from '@/components/OperatorDashboard';
 import { Search, MapPin, Sparkles, X, Map, Navigation } from 'lucide-react';
 
 export default function DashboardPage() {
+  const [viewMode, setViewMode] = useState<'Passenger' | 'Operator'>('Passenger');
   const [startingPoint, setStartingPoint] = useState('');
   const [destination, setDestination]     = useState('');
   const [hasSearched, setHasSearched]     = useState(false);
   const [aiAgentOpen, setAiAgentOpen]     = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('role') === 'Operator') {
+        setViewMode('Operator');
+      }
+    }
+  }, []);
 
   const handleMobileSearch = () => {
     if (startingPoint && destination) {
@@ -22,12 +33,16 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-slate-50">
-      <TopBar />
+      <TopBar viewMode={viewMode} onViewModeChange={setViewMode} />
       
-      {/* ========================================= */}
-      {/* MOBILE FLOW (hidden on md)                */}
-      {/* ========================================= */}
-      <div className="md:hidden flex-1 h-full w-full relative flex flex-col">
+      {viewMode === 'Operator' ? (
+        <OperatorDashboard />
+      ) : (
+        <>
+          {/* ========================================= */}
+          {/* MOBILE FLOW (hidden on md)                */}
+          {/* ========================================= */}
+          <div className="md:hidden flex-1 h-full w-full relative flex flex-col">
         {!hasSearched ? (
           // Mobile Search First View
           <div className="flex-1 overflow-y-auto p-4 flex flex-col items-center justify-start">
@@ -223,7 +238,9 @@ export default function DashboardPage() {
              />
           </div>
 
-      </div>
+        </div>
+        </>
+      )}
     </div>
   );
 }
