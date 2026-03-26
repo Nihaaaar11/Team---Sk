@@ -5,7 +5,7 @@ import Sidebar from '@/components/Sidebar';
 import TopBar from '@/components/TopBar';
 import TelemetryDashboard from '@/components/TelemetryDashboard';
 import AIInsightsPanel from '@/components/AIInsightsPanel';
-import { Search, MapPin, Sparkles, X, Map } from 'lucide-react';
+import { Search, MapPin, Sparkles, X, Map, Navigation } from 'lucide-react';
 
 export default function DashboardPage() {
   const [startingPoint, setStartingPoint] = useState('');
@@ -46,8 +46,40 @@ export default function DashboardPage() {
                     value={startingPoint}
                     onChange={e => setStartingPoint(e.target.value)}
                     placeholder="Enter Starting point"
-                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all font-semibold text-lg"
+                    className="w-full pl-12 pr-12 py-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all font-semibold text-lg"
                   />
+                  <button 
+                  onClick={() => {
+                    setStartingPoint('Locating...');
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                          if (window.google && google.maps && google.maps.Geocoder) {
+                            const geocoder = new google.maps.Geocoder();
+                            geocoder.geocode({ location: { lat: pos.coords.latitude, lng: pos.coords.longitude } }, (results, status) => {
+                               if (status === 'OK' && results && results[0]) {
+                                 setStartingPoint(results[0].formatted_address);
+                               } else {
+                                 setStartingPoint(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
+                               }
+                            });
+                          } else {
+                            setStartingPoint(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
+                          }
+                        },
+                        (err) => {
+                          console.error(err);
+                          setStartingPoint('Location access denied');
+                        },
+                        { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+                      );
+                    }
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors p-1"
+                  title="Use Current Location"
+                >
+                  <Navigation size={18} />
+                </button>
                 </div>
                 <div className="relative group">
                   <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" />
@@ -179,14 +211,7 @@ export default function DashboardPage() {
           
           {/* Persistent Sidebar on PC */}
           <div className="z-20 h-full bg-slate-50 flex flex-col shrink-0 w-96 border-l border-border transition-all">
-             <div className="p-5 border-b border-slate-200 flex flex-col bg-white shrink-0">
-               <h3 className="font-extrabold text-slate-800 text-xl capitalize flex items-center gap-2 mb-1">
-                 <Map className="text-primary w-5 h-5"/> Live Dashboard
-               </h3>
-               <p className="text-sm font-semibold text-slate-500">
-                 Real-time Transport Demand
-               </p>
-             </div>
+
              
              <Sidebar 
                className="flex-1 w-full bg-slate-50/50" 

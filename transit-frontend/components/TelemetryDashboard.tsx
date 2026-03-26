@@ -1,17 +1,12 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import { Navigation } from 'lucide-react';
 
 const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
 
-const mapCenter = { lat: 17.3850, lng: 78.4867 }; // Hyderabad
-
-const mockVehicles = [
-  { id: 1, lat: 17.3880, lng: 78.4850, type: 'bus' },
-  { id: 2, lat: 17.3820, lng: 78.4780, type: 'auto' },
-  { id: 3, lat: 17.3910, lng: 78.4920, type: 'train' },
-];
+const defaultCenter = { lat: 17.3850, lng: 78.4867 }; // Default: Hyderabad
 
 const mapOptions: google.maps.MapOptions = {
   mapTypeId: 'roadmap',
@@ -37,6 +32,7 @@ const mapOptions: google.maps.MapOptions = {
 
 export default function TelemetryDashboard() {
   const mapRef = useRef<google.maps.Map | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<{lat: number, lng: number} | null>(null);
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_KEY,
@@ -45,10 +41,36 @@ export default function TelemetryDashboard() {
   const onLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
     map.setTilt(45);
-  }, []);
+    
+    // Apply immediate pan if location already resolved before map load
+    if (currentLocation) {
+        map.panTo(currentLocation);
+        map.setZoom(15);
+    }
+  }, [currentLocation]);
 
   const onUnmount = useCallback(() => {
     mapRef.current = null;
+  }, []);
+
+  // Fetch HTML5 Geolocation
+  useEffect(() => {
+    if (typeof window !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const loc = { lat: position.coords.latitude, lng: position.coords.longitude };
+          setCurrentLocation(loc);
+          if (mapRef.current) {
+            mapRef.current.panTo(loc);
+            mapRef.current.setZoom(15);
+          }
+        },
+        (error) => {
+          console.warn("Geolocation access denied or unavailable.", error);
+        },
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
+      );
+    }
   }, []);
 
   if (!GOOGLE_MAPS_KEY || GOOGLE_MAPS_KEY.length < 10) {
@@ -77,39 +99,61 @@ export default function TelemetryDashboard() {
 
   if (!isLoaded) {
     return (
-      <div className="absolute inset-0 bg-background flex items-center justify-center">
-        <div className="animate-pulse text-slate-500 font-medium text-sm">Loading map…</div>
+      <div className="absolute inset-0 bg-slate-50 flex items-center justify-center">
+        <div className="animate-pulse text-slate-500 font-medium text-sm">Loading telemetry grid…</div>
       </div>
     );
   }
 
   return (
-    <div className="absolute inset-0 bg-slate-900 border-t border-border">
+    <div className="absolute inset-0 bg-slate-100 border-t border-border">
       <GoogleMap
         mapContainerStyle={{ width: '100%', height: '100%' }}
-        center={mapCenter}
+        center={defaultCenter}
         zoom={13}
         options={mapOptions}
         onLoad={onLoad}
         onUnmount={onUnmount}
       >
-        {mockVehicles.map((v) => (
+        {/* Render actual User Location */}
+        {currentLocation && (
           <Marker
-            key={v.id}
-            position={{ lat: v.lat, lng: v.lng }}
-            title={v.type}
+            position={currentLocation}
+            title="You are here"
             icon={{
               path: google.maps.SymbolPath.CIRCLE,
-              scale: 8,
-              fillColor: '#38bdf8', /* Sky blue markers */
-              fillOpacity: 0.9,
-              strokeColor: '#0ea5e9',
-              strokeWeight: 2,
+              scale: 10,
+              fillColor: '#3b82f6', /* Deep blue dot for user */
+              fillOpacity: 1,
+              strokeColor: '#ffffff',
+              strokeWeight: 3,
             }}
           />
-        ))}
+        )}
       </GoogleMap>
 
+      {/* Floating Locate-Me Button */}
+      <button
+        title="Find My Location"
+        onClick={() => {
+          if (currentLocation && mapRef.current) {
+            mapRef.current.panTo(currentLocation);
+            mapRef.current.setZoom(15);
+          } else if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+              const loc = { lat: position.coords.latitude, lng: position.coords.longitude };
+              setCurrentLocation(loc);
+              if (mapRef.current) {
+                  mapRef.current.panTo(loc);
+                  mapRef.current.setZoom(15);
+              }
+            }, undefined, { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 });
+          }
+        }}
+        className="absolute bottom-24 right-5 z-20 bg-white p-3 rounded-full shadow-lg text-slate-500 hover:text-primary hover:bg-slate-50 transition-colors border border-slate-200"
+      >
+        <Navigation size={22} className="text-primary fill-primary/20" />
+      </button>
 
     </div>
   );

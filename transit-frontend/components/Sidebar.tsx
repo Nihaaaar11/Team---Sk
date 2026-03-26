@@ -13,10 +13,9 @@ interface SidebarProps {
 }
 
 const transportModes = [
-  { id: 'bus',   label: 'Bus',    icon: Bus,        color: 'text-amber-400',  bg: 'bg-amber-400/10 hover:bg-amber-400/20 border-amber-400/30' },
-  { id: 'metro', label: 'Metro',  icon: Train,      color: 'text-blue-400',   bg: 'bg-blue-400/10 hover:bg-blue-400/20 border-blue-400/30' },
-  { id: 'auto',  label: 'Auto',   icon: Zap,        color: 'text-yellow-400', bg: 'bg-yellow-400/10 hover:bg-yellow-400/20 border-yellow-400/30' },
-  { id: 'cycle', label: 'Cycle',  icon: Bike,       color: 'text-green-400',  bg: 'bg-green-400/10 hover:bg-green-400/20 border-green-400/30' },
+  { id: 'bus',   label: 'RTC Bus', icon: Bus,        color: 'text-amber-500',  bg: 'bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/30' },
+  { id: 'metro', label: 'Metro',   icon: Train,      color: 'text-blue-500',   bg: 'bg-blue-500/10 hover:bg-blue-500/20 border-blue-500/30' },
+  { id: 'train', label: 'Local Train (MMTS)', icon: Train, color: 'text-emerald-500', bg: 'bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/30' },
 ];
 
 const suggestions = [
@@ -101,25 +100,27 @@ export default function Sidebar({ className = '', startPoint = '', destPoint = '
       )}
 
       {/* ── Transport modes ── */}
-      <div className="mb-6">
-        <h3 className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-3 px-1">
-          Select Mode of Transport
-        </h3>
-        <div className="grid grid-cols-2 gap-3">
-          {transportModes.map(({ id, label, icon: Icon, color, bg }) => (
-            <button
-              key={id}
-              onClick={() => setActiveMode(prev => prev === id ? null : id)}
-              className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl border-2 text-sm font-bold transition-all ${bg} ${
-                activeMode === id ? 'border-primary ring-2 ring-primary/20 scale-[0.98]' : 'border-transparent'
-              }`}
-            >
-              <Icon size={16} className={color} />
-              <span className="text-slate-800">{label}</span>
-            </button>
-          ))}
+      {(startPoint || destPoint) && (
+        <div className="mb-6 animate-in slide-in-from-top-2 fade-in duration-300">
+          <h3 className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-3 px-1">
+            Select Mode of Transport
+          </h3>
+          <div className="flex flex-col gap-2">
+            {transportModes.map(({ id, label, icon: Icon, color, bg }) => (
+              <button
+                key={id}
+                onClick={() => setActiveMode(prev => prev === id ? null : id)}
+                className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl border-2 text-sm font-bold transition-all ${bg} ${
+                  activeMode === id ? 'border-primary ring-2 ring-primary/20 scale-[0.98]' : 'border-transparent'
+                }`}
+              >
+                <Icon size={16} className={color} />
+                <span className="text-slate-800">{label}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── Suggestions & Directions ── */}
       <div className="flex-1">
