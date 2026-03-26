@@ -27,50 +27,44 @@ const crowdColor: Record<string, string> = {
 };
 
 export default function Sidebar({ className = '' }: SidebarProps) {
-  const [searchOpen, setSearchOpen]     = useState(false);
-  const [query, setQuery]               = useState('');
+  const [startingPoint, setStartingPoint] = useState('');
+  const [destination, setDestination]     = useState('');
   const [activeMode, setActiveMode]     = useState<string | null>(null);
 
   const filteredSuggestions = suggestions.filter(s => {
     const matchesMode  = activeMode ? s.mode === activeMode : true;
-    const matchesQuery = query
-      ? s.from.toLowerCase().includes(query.toLowerCase()) ||
-        s.to.toLowerCase().includes(query.toLowerCase())
+    const matchesFrom = startingPoint
+      ? s.from.toLowerCase().includes(startingPoint.toLowerCase())
       : true;
-    return matchesMode && matchesQuery;
+    const matchesTo = destination
+      ? s.to.toLowerCase().includes(destination.toLowerCase())
+      : true;
+    return matchesMode && matchesFrom && matchesTo;
   });
 
   return (
     <aside className={`bg-sidebar px-4 py-6 flex flex-col overflow-y-auto ${className}`}>
 
-      {/* ── Search toggle ── */}
-      <div className="mb-5">
-        {!searchOpen ? (
-          <button
-            onClick={() => setSearchOpen(true)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-white/50 border border-slate-300 text-slate-500 text-sm hover:border-primary/60 hover:text-slate-800 transition-all shadow-sm"
-          >
-            <Search size={15} />
-            <span>Search routes…</span>
-          </button>
-        ) : (
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-            <input
-              autoFocus
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="From or to…"
-              className="w-full pl-8 pr-8 py-2 rounded-lg bg-white border border-primary/50 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm"
-            />
-            <button
-              onClick={() => { setSearchOpen(false); setQuery(''); }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
-            >
-              <X size={14} />
-            </button>
-          </div>
-        )}
+      {/* ── Search inputs ── */}
+      <div className="mb-5 flex flex-col gap-2">
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+          <input
+            value={startingPoint}
+            onChange={e => setStartingPoint(e.target.value)}
+            placeholder="Enter Starting point"
+            className="w-full pl-8 pr-3 py-2 rounded-lg bg-white/80 border border-slate-300 text-sm text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/30 shadow-sm transition-all focus:bg-white"
+          />
+        </div>
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+          <input
+            value={destination}
+            onChange={e => setDestination(e.target.value)}
+            placeholder="Enter destination"
+            className="w-full pl-8 pr-3 py-2 rounded-lg bg-white/80 border border-slate-300 text-sm text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/30 shadow-sm transition-all focus:bg-white"
+          />
+        </div>
       </div>
 
       {/* ── Transport modes ── */}
