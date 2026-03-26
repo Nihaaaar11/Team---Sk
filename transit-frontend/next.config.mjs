@@ -9,6 +9,10 @@ for (const name of requiredEnv) {
 }
 
 const nextConfig = {
+  output: 'export',
+  images: {
+    unoptimized: true
+  },
   env: {
     // Expose client-side API key via NEXT_PUBLIC_.* only if set, with server fallback
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:
