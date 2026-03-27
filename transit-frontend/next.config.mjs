@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const requiredEnv = ['GOOGLE_MAPS_API_KEY'];
+const requiredEnv = ['NEXT_PUBLIC_GEOAPIFY_API_KEY'];
 for (const name of requiredEnv) {
   if (!process.env[name] || process.env[name].trim() === '') {
     throw new Error(
@@ -9,13 +9,9 @@ for (const name of requiredEnv) {
 }
 
 const nextConfig = {
+  output: 'export',
   images: {
     unoptimized: true
-  },
-  env: {
-    // Expose client-side API key via NEXT_PUBLIC_.* only if set, with server fallback
-    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:
-      process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY,
   },
 };
 

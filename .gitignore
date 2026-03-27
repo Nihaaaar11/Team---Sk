@@ -2,6 +2,7 @@ node_modules/
 .next/
 .vscode/
 *.log
+.env
 .env.local
 build/
 dist/
