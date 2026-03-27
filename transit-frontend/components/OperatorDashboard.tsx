@@ -33,6 +33,25 @@ export default function OperatorDashboard() {
           }
         ]);
 
+      // Fire simultaneous pipeline payload to Base44 Live Intelligence Agent
+      import('@/lib/base44Client').then(async ({ createTicketingRecord }) => {
+        try {
+          await createTicketingRecord({
+            route_name: tripId,
+            date: new Date().toISOString().split('T')[0],
+            time_slot: new Date().toLocaleTimeString(),
+            passenger_count: parseInt(ticketsSold),
+            ticket_type: logType,
+            revenue: parseFloat(revenue),
+            vehicle_type: transportMode,
+            stop_name: "Operator Terminal",
+            occupancy_rate: 100
+          });
+        } catch (aiErr) {
+          console.warn("Non-fatal: Failed to ping Base44 agent", aiErr);
+        }
+      });
+
       if (error) {
         console.error("Supabase Error:", error);
         alert(`Supabase Error: ${error.message}\nMake sure that the 'ticketing_logs' table actually exists in your Supabase database!`);
