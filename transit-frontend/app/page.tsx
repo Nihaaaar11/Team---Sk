@@ -21,6 +21,7 @@ export default function DashboardPage() {
   const [aiAgentOpen, setAiAgentOpen]     = useState(false);
 
   const { isLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-script',
     googleMapsApiKey: GOOGLE_MAPS_KEY,
     libraries,
   });
