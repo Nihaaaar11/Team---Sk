@@ -237,7 +237,7 @@ export default function LoginPage() {
                     type="text" 
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Alex Johnson" 
+                    placeholder="Alex Johnson" 
                     className="w-full bg-white/70 border-2 border-white/80 text-[#1e3a8a] placeholder-slate-400 font-semibold rounded-2xl px-5 py-3 focus:outline-none focus:ring-4 focus:ring-sky-200 focus:border-[#87CEEB] transition-all shadow-sm"
                   />
                 </div>
@@ -334,7 +334,7 @@ export default function LoginPage() {
                       type="text" 
                       value={operatorVehicle}
                       onChange={e => setOperatorVehicle(e.target.value)}
-                      placeholder="e.g. AP-09-XX-9999"
+                      placeholder="AP-09-XX-9999"
                       className="w-full bg-white/70 border-2 border-white/80 text-[#1e3a8a] placeholder-slate-400 font-semibold rounded-2xl pl-11 pr-5 py-3 focus:outline-none focus:ring-4 focus:ring-sky-200 transition-all shadow-sm focus:border-[#87CEEB]"
                     />
                   </div>
