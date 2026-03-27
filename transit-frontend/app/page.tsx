@@ -138,7 +138,7 @@ export default function DashboardPage() {
                   {!aiAgentOpen && (
                     <button
                       onClick={() => setAiAgentOpen(true)}
-                      className="absolute bottom-[55vh] left-4 z-20 w-14 h-14 bg-white text-primary rounded-2xl flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all outline outline-4 outline-white cursor-pointer group"
+                      className="absolute bottom-[55vh] left-4 z-[1000] w-14 h-14 bg-white text-primary rounded-2xl flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all outline outline-4 outline-white cursor-pointer group"
                     >
                       <Sparkles size={24} className="animate-pulse" />
                     </button>
@@ -146,7 +146,7 @@ export default function DashboardPage() {
 
                   {/* Mobile AI Insights Overlay */}
                   {aiAgentOpen && (
-                    <div className="absolute inset-x-0 bottom-[50vh] z-30 max-h-[45vh] animate-in slide-in-from-bottom-8 duration-300 flex flex-col pointer-events-none p-4">
+                    <div className="absolute inset-x-0 bottom-[50vh] z-[1000] max-h-[45vh] animate-in slide-in-from-bottom-8 duration-300 flex flex-col pointer-events-none p-4">
                       <div className="bg-white/95 backdrop-blur-xl border border-slate-200 rounded-3xl shadow-2xl pointer-events-auto flex flex-col overflow-hidden w-full">
                         <div className="flex justify-between items-center px-5 py-4 border-b border-slate-100 bg-white">
                           <h3 className="font-extrabold text-slate-800 flex items-center gap-2">
@@ -209,7 +209,7 @@ export default function DashboardPage() {
               {!aiAgentOpen && (
                 <button
                   onClick={() => setAiAgentOpen(true)}
-                  className="absolute bottom-6 left-6 z-20 w-16 h-16 bg-white text-primary rounded-2xl flex items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:scale-105 active:scale-95 transition-all outline outline-4 outline-white cursor-pointer group"
+                  className="absolute bottom-6 left-6 z-[1000] w-16 h-16 bg-white text-primary rounded-2xl flex items-center justify-center shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:scale-105 active:scale-95 transition-all outline outline-4 outline-white cursor-pointer group"
                 >
                   <div className="absolute inset-0 bg-primary/10 rounded-2xl group-hover:bg-primary/20 transition-colors"></div>
                   <Sparkles size={28} className="animate-pulse relative z-10" />
@@ -218,7 +218,7 @@ export default function DashboardPage() {
 
               {/* Expanded AI Insights Overlay (PC) */}
               {aiAgentOpen && (
-                <div className="absolute bottom-6 left-6 z-30 max-h-[85vh] animate-in slide-in-from-left-8 duration-300 ease-out flex flex-col gap-2 pointer-events-none">
+                <div className="absolute bottom-6 left-6 z-[1000] max-h-[85vh] animate-in slide-in-from-left-8 duration-300 ease-out flex flex-col gap-2 pointer-events-none">
                   <div className="bg-white/90 backdrop-blur-xl border border-slate-200 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] pointer-events-auto flex flex-col overflow-hidden max-w-[400px]">
                     <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-white">
                       <h3 className="font-extrabold text-slate-800 flex items-center gap-2">
