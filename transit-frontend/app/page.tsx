@@ -11,7 +11,6 @@ import { Search, MapPin, Sparkles, X, Map, Navigation } from 'lucide-react';
 import { useJsApiLoader } from '@react-google-maps/api';
 
 const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
-const libraries: any = ['places'];
 
 export default function DashboardPage() {
   const [viewMode, setViewMode] = useState<'Passenger' | 'Operator'>('Passenger');
@@ -23,7 +22,6 @@ export default function DashboardPage() {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: GOOGLE_MAPS_KEY,
-    libraries,
   });
 
   useEffect(() => {
