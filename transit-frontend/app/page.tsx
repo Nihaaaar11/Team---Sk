@@ -6,6 +6,7 @@ import TopBar from '@/components/TopBar';
 import TelemetryDashboard from '@/components/TelemetryDashboard';
 import AIInsightsPanel from '@/components/AIInsightsPanel';
 import OperatorDashboard from '@/components/OperatorDashboard';
+import AddToHomeScreen from '@/components/AddToHomeScreen';
 import { Search, MapPin, Sparkles, X, Map, Navigation } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -18,8 +19,21 @@ export default function DashboardPage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      if (params.get('role') === 'Operator') {
-        setViewMode('Operator');
+      const urlRole = params.get('role');
+      const storedRole = localStorage.getItem('travelEase_role');
+
+      if (urlRole) {
+        // Authenticated redirect detected
+        localStorage.setItem('travelEase_role', urlRole);
+        setViewMode(urlRole as 'Passenger' | 'Operator');
+        // Clear query parameters smoothly
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else if (storedRole) {
+        // Known session found
+        setViewMode(storedRole as 'Passenger' | 'Operator');
+      } else {
+        // Intruding session
+        window.location.href = '/login';
       }
     }
   }, []);
@@ -241,6 +255,8 @@ export default function DashboardPage() {
         </div>
         </>
       )}
+
+      <AddToHomeScreen />
     </div>
   );
 }

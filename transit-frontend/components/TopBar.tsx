@@ -48,7 +48,10 @@ export default function TopBar({ viewMode = 'Passenger', onViewModeChange }: Top
         {/* Logout Button */}
         <div className="flex shrink-0">
           <button 
-            onClick={() => window.location.href = '/login'}
+            onClick={() => {
+              localStorage.removeItem('travelEase_role');
+              window.location.href = '/login';
+            }}
             className="px-5 py-2 bg-red-50 text-red-600 hover:bg-red-500 hover:text-white rounded-xl text-sm font-bold transition-all border border-red-100 shadow-sm"
           >
             Log Out

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
@@ -10,8 +10,13 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Transit Demand Balancer',
+  title: 'TravelEase',
   description: 'AI-driven public transportation demand engine UI',
+  manifest: '/manifest.json',
+};
+
+export const viewport: Viewport = {
+  themeColor: '#3b82f6',
 };
 
 export default function RootLayout({
