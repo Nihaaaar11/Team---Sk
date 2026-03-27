@@ -49,19 +49,19 @@ export default function AddToHomeScreen() {
 
   return (
     <div className="fixed bottom-24 left-1/2 -translate-x-1/2 md:bottom-8 md:right-8 md:left-auto md:translate-x-0 z-50 animate-in slide-in-from-bottom-5 fade-in duration-500">
-      <div className="bg-[#1e3a8a] text-white px-5 py-4 rounded-2xl shadow-2xl flex flex-col items-center gap-3 w-72 border-2 border-sky-400">
+      <div className="bg-[#FAF6EE] text-slate-800 px-5 py-4 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.15)] flex flex-col items-center gap-3 w-72 border-2 border-sky-200">
         <div className="flex justify-between w-full items-start">
           <div className="flex flex-col pr-4">
-            <h4 className="font-extrabold text-sm uppercase tracking-wide text-sky-200">Get the App</h4>
-            <p className="text-xs font-semibold leading-relaxed mt-1 text-slate-100">Install TravelEase directly to your home screen for rapid access.</p>
+            <h4 className="font-extrabold text-sm uppercase tracking-wide text-sky-600">Get the App</h4>
+            <p className="text-xs font-semibold leading-relaxed mt-1 text-slate-600">Install TravelEase directly to your home screen for rapid access.</p>
           </div>
-          <button onClick={() => setIsReady(false)} className="text-white/50 hover:text-white shrink-0 -mt-1 -mr-2 p-1">
+          <button onClick={() => setIsReady(false)} className="text-slate-400 hover:text-slate-600 shrink-0 -mt-1 -mr-2 p-1 transition-colors">
             <X size={18} />
           </button>
         </div>
         <button 
           onClick={handleInstallClick}
-          className="w-full bg-[#3b82f6] hover:bg-sky-400 text-white font-bold py-2.5 rounded-xl flex justify-center items-center gap-2 shadow-lg transition-colors border border-sky-300"
+          className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2.5 rounded-xl flex justify-center items-center gap-2 shadow-md hover:shadow-lg transition-all border border-sky-400 active:scale-[0.98]"
         >
           <Download size={18} /> Add to Home Screen
         </button>
