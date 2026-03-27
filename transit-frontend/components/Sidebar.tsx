@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 import { Bus, Train, Zap, Bike, Navigation, Search, X } from 'lucide-react';
+import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
+
+const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
+const libraries: any = ['places'];
 
 interface SidebarProps {
   className?: string;
@@ -33,6 +37,27 @@ const crowdColor: Record<string, string> = {
 export default function Sidebar({ className = '', startPoint = '', destPoint = '', onStartChange, onDestChange, showSearchToggle = false }: SidebarProps) {
   const [activeMode, setActiveMode] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [autoStart, setAutoStart] = useState<any>(null);
+  const [autoDest, setAutoDest] = useState<any>(null);
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: GOOGLE_MAPS_KEY,
+    libraries,
+  });
+
+  const handleStartPlace = () => {
+    if (autoStart !== null) {
+      const place = autoStart.getPlace();
+      if(onStartChange) onStartChange(place.name || place.formatted_address || startPoint);
+    }
+  };
+
+  const handleDestPlace = () => {
+    if (autoDest !== null) {
+      const place = autoDest.getPlace();
+      if(onDestChange) onDestChange(place.name || place.formatted_address || destPoint);
+    }
+  };
 
   const filteredSuggestions = suggestions.filter(s => {
     const matchesMode  = activeMode ? s.mode === activeMode : true;
@@ -77,22 +102,44 @@ export default function Sidebar({ className = '', startPoint = '', destPoint = '
               </div>
 
               <div className="relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                <input
-                  value={startPoint}
-                  onChange={e => onStartChange && onStartChange(e.target.value)}
-                  placeholder="Enter Starting point"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm transition-all"
-                />
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" />
+                {isLoaded ? (
+                  <Autocomplete onLoad={setAutoStart} onPlaceChanged={handleStartPlace} className="w-full">
+                    <input
+                      value={startPoint}
+                      onChange={e => onStartChange && onStartChange(e.target.value)}
+                      placeholder="Search precise starting point..."
+                      className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm transition-all"
+                    />
+                  </Autocomplete>
+                ) : (
+                  <input
+                    value={startPoint}
+                    onChange={e => onStartChange && onStartChange(e.target.value)}
+                    placeholder="Enter Starting point"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm transition-all"
+                  />
+                )}
               </div>
               <div className="relative">
-                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                <input
-                  value={destPoint}
-                  onChange={e => onDestChange && onDestChange(e.target.value)}
-                  placeholder="Enter destination"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm transition-all"
-                />
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" />
+                {isLoaded ? (
+                  <Autocomplete onLoad={setAutoDest} onPlaceChanged={handleDestPlace} className="w-full">
+                    <input
+                      value={destPoint}
+                      onChange={e => onDestChange && onDestChange(e.target.value)}
+                      placeholder="Search precise destination..."
+                      className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm transition-all"
+                    />
+                  </Autocomplete>
+                ) : (
+                  <input
+                    value={destPoint}
+                    onChange={e => onDestChange && onDestChange(e.target.value)}
+                    placeholder="Enter destination"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-white border border-slate-200 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-sm transition-all"
+                  />
+                )}
               </div>
             </div>
           )}

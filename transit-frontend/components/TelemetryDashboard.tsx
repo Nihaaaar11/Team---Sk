@@ -6,6 +6,7 @@ import { Navigation } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
+const libraries: any = ['places'];
 
 const defaultCenter = { lat: 17.3850, lng: 78.4867 }; // Default: Hyderabad
 
@@ -37,6 +38,7 @@ export default function TelemetryDashboard() {
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: GOOGLE_MAPS_KEY,
+    libraries,
   });
 
   const onLoad = useCallback((map: google.maps.Map) => {

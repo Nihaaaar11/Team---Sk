@@ -37,3 +37,13 @@ body {
   background: #94a3b8;
   border-radius: 4px;
 }
+
+/* Force Google Maps Places Autocomplete to render above Next.js elements */
+.pac-container {
+  z-index: 999999 !important;
+  border-radius: 0.75rem !important;
+  font-family: var(--font-jetbrains-mono), monospace !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+  margin-top: 5px !important;
+}
