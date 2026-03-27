@@ -9,7 +9,6 @@ for (const name of requiredEnv) {
 }
 
 const nextConfig = {
-  output: 'export',
   images: {
     unoptimized: true
   },
