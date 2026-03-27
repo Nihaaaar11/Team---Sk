@@ -8,6 +8,10 @@ import AIInsightsPanel from '@/components/AIInsightsPanel';
 import OperatorDashboard from '@/components/OperatorDashboard';
 import AddToHomeScreen from '@/components/AddToHomeScreen';
 import { Search, MapPin, Sparkles, X, Map, Navigation } from 'lucide-react';
+import { useJsApiLoader } from '@react-google-maps/api';
+
+const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
+const libraries: any = ['places'];
 
 export default function DashboardPage() {
   const [viewMode, setViewMode] = useState<'Passenger' | 'Operator'>('Passenger');
@@ -15,6 +19,11 @@ export default function DashboardPage() {
   const [destination, setDestination]     = useState('');
   const [hasSearched, setHasSearched]     = useState(false);
   const [aiAgentOpen, setAiAgentOpen]     = useState(false);
+
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: GOOGLE_MAPS_KEY,
+    libraries,
+  });
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -134,7 +143,7 @@ export default function DashboardPage() {
           // Mobile Map & Bottom Sheet View
           <div className="flex flex-1 h-full w-full overflow-hidden relative flex-col">
             <main className="flex-1 relative h-full w-full shrink-0 bg-slate-100">
-              <TelemetryDashboard />
+              <TelemetryDashboard isLoaded={isLoaded} loadError={loadError} />
               
               {/* Mobile AI Agent Floating Button */}
               {!aiAgentOpen && (
@@ -192,6 +201,7 @@ export default function DashboardPage() {
                  startPoint={startingPoint} 
                  destPoint={destination} 
                  showSearchToggle={false}
+                 isLoaded={isLoaded}
                />
             </div>
           </div>
@@ -205,7 +215,7 @@ export default function DashboardPage() {
           
           {/* Main Map Area */}
           <main className="flex-1 relative h-full w-full shrink-0 bg-slate-100">
-            <TelemetryDashboard />
+            <TelemetryDashboard isLoaded={isLoaded} loadError={loadError} />
             
             {/* AI Agent Floating Button (PC) */}
             {!aiAgentOpen && (
@@ -249,6 +259,7 @@ export default function DashboardPage() {
                onStartChange={setStartingPoint}
                onDestChange={setDestination}
                showSearchToggle={true}
+               isLoaded={isLoaded}
              />
           </div>
 

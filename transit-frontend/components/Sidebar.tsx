@@ -4,9 +4,6 @@ import { useState } from 'react';
 import { Bus, Train, Zap, Bike, Navigation, Search, X } from 'lucide-react';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 
-const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '';
-const libraries: any = ['places'];
-
 interface SidebarProps {
   className?: string;
   startPoint?: string;
@@ -14,6 +11,7 @@ interface SidebarProps {
   onStartChange?: (v: string) => void;
   onDestChange?: (v: string) => void;
   showSearchToggle?: boolean;
+  isLoaded?: boolean;
 }
 
 const transportModes = [
@@ -34,16 +32,11 @@ const crowdColor: Record<string, string> = {
   High: 'text-red-500',
 };
 
-export default function Sidebar({ className = '', startPoint = '', destPoint = '', onStartChange, onDestChange, showSearchToggle = false }: SidebarProps) {
+export default function Sidebar({ className = '', startPoint = '', destPoint = '', onStartChange, onDestChange, showSearchToggle = false, isLoaded = false }: SidebarProps) {
   const [activeMode, setActiveMode] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [autoStart, setAutoStart] = useState<any>(null);
   const [autoDest, setAutoDest] = useState<any>(null);
-
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_MAPS_KEY,
-    libraries,
-  });
 
   const handleStartPlace = () => {
     if (autoStart !== null) {
